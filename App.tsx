@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import TopBar from './components/TopBar';
 import Hero from './components/Hero';
 import StatsSection from './components/StatsSection';
-import SystemIntroSection from './components/SystemIntroSection';
-import ProcessSection from './components/ProcessSection';
 import SafetySection from './components/SafetySection';
-import AIAnalysisSection from './components/AIAnalysisSection'; // New component
 import LeadFormSection from './components/LeadFormSection';
 import BusinessInfo from './components/BusinessInfo';
 import Footer from './components/Footer';
@@ -24,21 +21,20 @@ const App: React.FC = () => {
       <TopBar />
 
       <main>
-        <div className="max-w-[1200px] mx-auto px-[20px] pt-10 pb-16">
+        <div className="max-w-[1200px] mx-auto px-5 pt-6 pb-10 md:pt-10 md:pb-16">
           <Hero />
         </div>
         
         <StatsSection />
 
-        <div className="max-w-[1200px] mx-auto px-[20px] py-20 space-y-32">
-          <AIAnalysisSection />
-          <SystemIntroSection />
-          <ProcessSection />
-          <SafetySection />
-          
+        <div className="max-w-[1200px] mx-auto px-5 py-12 space-y-20">
+          {/* 핵심: 진단 폼을 상단으로 배치하여 즉각적인 행동 유도 */}
           <div id="check">
             <LeadFormSection showToast={showToast} />
           </div>
+          
+          {/* 신뢰 요소: 폼 작성 후 망설임을 줄이기 위한 장치 */}
+          <SafetySection />
           
           <div>
             <BusinessInfo />
