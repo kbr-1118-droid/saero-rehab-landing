@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TopBar from './components/TopBar';
 import Hero from './components/Hero';
 import StatsSection from './components/StatsSection';
+import CheckListSection from './components/CheckListSection'; // New Empathy Section
 import SafetySection from './components/SafetySection';
 import LeadFormSection from './components/LeadFormSection';
 import BusinessInfo from './components/BusinessInfo';
@@ -27,13 +28,17 @@ const App: React.FC = () => {
         
         <StatsSection />
 
-        <div className="max-w-[1200px] mx-auto px-5 py-12 space-y-20">
-          {/* 핵심: 진단 폼을 상단으로 배치하여 즉각적인 행동 유도 */}
+        <div className="max-w-[1200px] mx-auto px-5 py-12 space-y-16 md:space-y-24">
+          
+          {/* [NEW] 공감 및 대상자 확인 섹션 */}
+          <CheckListSection />
+
+          {/* 핵심: 자가 진단 폼 */}
           <div id="check">
             <LeadFormSection showToast={showToast} />
           </div>
           
-          {/* 신뢰 요소: 폼 작성 후 망설임을 줄이기 위한 장치 */}
+          {/* 신뢰 요소 */}
           <SafetySection />
           
           <div>

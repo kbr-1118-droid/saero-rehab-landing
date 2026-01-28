@@ -7,27 +7,44 @@ interface LeadFormSectionProps {
 }
 
 interface OptionButtonProps {
+  index: number;
   label: string;
   selected: boolean;
   onClick: () => void;
 }
 
-const OptionButton: React.FC<OptionButtonProps> = ({ label, selected, onClick }) => (
+const OptionButton: React.FC<OptionButtonProps> = ({ index, label, selected, onClick }) => (
   <button
     type="button"
     onClick={onClick}
     className={`
-      w-full p-5 rounded-2xl border text-left transition-all duration-200 group relative overflow-hidden mb-3 last:mb-0
+      w-full p-4 md:p-5 rounded-xl border text-left transition-all duration-200 group relative overflow-hidden mb-3 last:mb-0 flex items-center gap-4
       ${selected 
-        ? 'border-accent bg-accent text-[#0f172a] font-bold shadow-[0_0_20px_rgba(56,189,248,0.3)]' 
-        : 'border-white/20 bg-[#1e293b] text-slate-200 hover:bg-[#283548] hover:border-white/30'
+        ? 'border-accent bg-accent/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+        : 'border-white/10 bg-[#1e293b]/50 text-slate-300 hover:bg-[#1e293b] hover:border-white/30'
       }
     `}
   >
-    <div className="flex justify-between items-center relative z-10">
-      <span className="text-[18px]">{label}</span>
-      {selected && <div className="text-[#0f172a] font-black text-xl">✓</div>}
+    {/* Number Badge */}
+    <div className={`
+      w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-xs font-bold transition-colors
+      ${selected 
+        ? 'bg-accent text-[#0f172a]' 
+        : 'bg-white/10 text-slate-400 group-hover:bg-white/20 group-hover:text-white'}
+    `}>
+      {index + 1}
     </div>
+
+    <span className="text-[16px] md:text-[17px] font-medium leading-snug">{label}</span>
+    
+    {/* Check Icon for Selected State */}
+    {selected && (
+      <div className="ml-auto text-accent">
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    )}
   </button>
 );
 
@@ -54,7 +71,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
 
   const handleSelect = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    setTimeout(() => setStep(prev => prev + 1), 150); 
+    setTimeout(() => setStep(prev => prev + 1), 250); 
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -64,7 +81,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
 
   const handleNext = () => {
     if (step === 3 && !formData.debtAmount) {
-      showToast("대략적인 채무액을 입력해주세요.");
+      showToast("채무액을 입력해주세요.");
       return;
     }
     setStep(prev => prev + 1);
@@ -81,7 +98,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
         return;
     }
     if (!formData.agreement) {
-        showToast("개인정보 수집 이용에 동의해주세요.");
+        showToast("개인정보 수집 동의가 필요합니다.");
         return;
     }
 
@@ -95,7 +112,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          subject: "새로회생 모바일 진단 접수", 
+          subject: "새로회생 자가진단 접수", 
           ...formData
         })
       });
@@ -117,44 +134,49 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
   const progress = Math.min(((step - 1) / 4) * 100, 100);
 
   return (
-    <section className="relative scroll-mt-20" ref={scrollRef}>
-      {/* Visual hook merging AI analysis concept */}
+    <section className="relative scroll-mt-24" ref={scrollRef}>
       <div className="text-center mb-8">
-         <h2 className="text-[28px] md:text-[40px] font-black text-white mb-3 leading-tight">
-           <span className="text-accent">AI 무료 진단</span>으로<br/>
-           가능성과 비용을 확인하세요
+         <h2 className="text-[28px] md:text-[36px] font-black text-white mb-2 leading-tight">
+           내 상황 <span className="text-accent border-b-4 border-accent/30">자가 진단</span>하기
          </h2>
-         <p className="text-slate-300 text-[16px] md:text-lg">
-           개인회생 가능 여부를 <b className="text-white">1분 안에 분석</b>해 드립니다.
+         <p className="text-slate-400 text-sm md:text-base">
+           3가지 질문으로 회생 가능성을 바로 체크해보세요.
          </p>
       </div>
 
-      <Card className="!p-0 overflow-hidden border-2 border-accent/30 shadow-[0_0_40px_rgba(56,189,248,0.1)] relative min-h-[480px] flex flex-col bg-[#111a2e]">
+      <Card className="!p-0 overflow-hidden border-2 border-white/10 shadow-2xl relative min-h-[500px] flex flex-col bg-[#111a2e]">
+        {/* Progress Bar */}
         {step < 5 && (
-          <div className="w-full bg-slate-800 h-2">
+          <div className="w-full bg-slate-800 h-1.5">
             <div 
-              className="bg-accent h-2 transition-all duration-300 ease-out shadow-[0_0_15px_rgba(56,189,248,0.8)]" 
+              className="bg-accent h-1.5 transition-all duration-300 ease-out" 
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         )}
 
-        <div className="p-6 md:p-10 flex-1 flex flex-col justify-center relative">
+        <div className="p-6 md:p-8 flex-1 flex flex-col relative">
           {loading && (
-             <div className="absolute inset-0 z-50 bg-[#0f172a]/95 flex flex-col items-center justify-center backdrop-blur-sm animate-[fadeIn_0.3s]">
-                <div className="w-12 h-12 border-4 border-slate-700 border-t-accent rounded-full animate-spin mb-4"></div>
-                <div className="text-white font-bold text-xl">진단 결과를 분석 중입니다</div>
+             <div className="absolute inset-0 z-50 bg-[#0f172a]/95 flex flex-col items-center justify-center backdrop-blur-sm">
+                <div className="w-10 h-10 border-4 border-slate-700 border-t-accent rounded-full animate-spin mb-4"></div>
+                <div className="text-white font-bold text-lg">결과를 정리하고 있습니다</div>
              </div>
           )}
 
+          {/* STEP 1 */}
           {step === 1 && (
-            <div className="animate-fade-in-up">
-              <span className="block text-accent font-bold mb-2 text-sm">STEP 1/3</span>
-              <h3 className="text-2xl font-bold text-white mb-6">현재 어떤 상황이신가요?</h3>
-              <div className="grid gap-2">
-                {['연체 직전 / 힘든 상황', '초기 연체 중 (독촉 시작)', '장기 연체 / 신용회복 중', '압류 / 경매 진행 중'].map((opt) => (
+            <div className="animate-fade-in-up flex-1 flex flex-col">
+              <div className="mb-6">
+                <span className="text-accent font-bold text-sm tracking-wide">Step 1. 현재 상황</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-1">지금 연체 중이신가요?</h3>
+                <p className="text-sm text-slate-400">독촉 진행 여부와 사건의 시급성을 판단하기 위함입니다.</p>
+              </div>
+              
+              <div className="grid gap-1">
+                {['아직 연체 전입니다 (납부일 임박)', '현재 연체 중입니다 (독촉 시작)', '이미 신용회복/장기 연체 중', '압류/경매 등 법적 조치 진행 중'].map((opt, idx) => (
                   <OptionButton 
-                    key={opt} 
+                    key={opt}
+                    index={idx}
                     label={opt} 
                     selected={formData.status === opt} 
                     onClick={() => handleSelect('status', opt)} 
@@ -164,28 +186,41 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
             </div>
           )}
 
+          {/* STEP 2 */}
           {step === 2 && (
-            <div className="animate-fade-in-up">
-              <span className="block text-accent font-bold mb-2 text-sm">STEP 2/3</span>
-              <h3 className="text-2xl font-bold text-white mb-6">현재 소득 형태는요?</h3>
-              <div className="grid gap-2">
-                {['4대보험 직장인', '프리랜서 / 아르바이트', '자영업 / 사업자', '무직 / 구직 중'].map((opt) => (
+            <div className="animate-fade-in-up flex-1 flex flex-col">
+              <div className="mb-6">
+                <span className="text-accent font-bold text-sm tracking-wide">Step 2. 소득 활동</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-1">수입이 있으신가요?</h3>
+                <p className="text-sm text-slate-400">최저생계비 이상의 소득이 있어야 진행이 가능합니다.</p>
+              </div>
+
+              <div className="grid gap-1">
+                {['4대보험 가입 직장인', '프리랜서 / 아르바이트', '자영업 / 개인사업자', '현재 소득 없음 / 구직 중'].map((opt, idx) => (
                   <OptionButton 
-                    key={opt} 
+                    key={opt}
+                    index={idx}
                     label={opt} 
                     selected={formData.income === opt} 
                     onClick={() => handleSelect('income', opt)} 
                   />
                 ))}
               </div>
-              <button type="button" onClick={handlePrev} className="mt-6 text-slate-400 text-sm underline p-2">이전으로</button>
+              <div className="mt-auto pt-6 text-center">
+                <button type="button" onClick={handlePrev} className="text-slate-500 text-sm hover:text-white transition-colors">이전 단계로</button>
+              </div>
             </div>
           )}
 
+          {/* STEP 3 */}
           {step === 3 && (
-            <form className="animate-fade-in-up" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
-              <span className="block text-accent font-bold mb-2 text-sm">STEP 3/3</span>
-              <h3 className="text-2xl font-bold text-white mb-6">총 채무액은 대략 얼마인가요?</h3>
+            <form className="animate-fade-in-up flex-1 flex flex-col" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
+              <div className="mb-6">
+                <span className="text-accent font-bold text-sm tracking-wide">Step 3. 채무 규모</span>
+                <h3 className="text-2xl font-bold text-white mt-1 mb-1">총 빚은 얼마인가요?</h3>
+                <p className="text-sm text-slate-400">담보 15억, 무담보 10억 이하일 때만 신청 가능합니다.</p>
+              </div>
+
               <div className="relative mb-6">
                 <input
                   type="text"
@@ -193,25 +228,31 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
                   value={formData.debtAmount}
                   onChange={handleChange}
                   placeholder="예: 5000"
-                  className="w-full p-6 rounded-2xl border border-white/20 bg-[#0f172a] text-white text-3xl outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-slate-600 font-bold text-center"
+                  className="w-full p-6 rounded-xl border border-white/20 bg-[#0f172a] text-white text-3xl outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-slate-700 font-bold text-center"
                   autoFocus
                 />
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-medium">만원</div>
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-medium">만원</div>
               </div>
-              <Button type="submit" className="w-full h-16 text-xl bg-accent text-[#0f172a] shadow-lg shadow-accent/20">
-                결과 확인하기
+              
+              <Button type="submit" className="w-full h-14 text-lg bg-white text-[#0f172a] hover:bg-slate-200 border-0 font-bold">
+                진단 결과 확인하기
               </Button>
-              <button type="button" onClick={handlePrev} className="mt-6 text-slate-400 text-sm underline block mx-auto">이전으로</button>
+              <div className="mt-auto pt-6 text-center">
+                <button type="button" onClick={handlePrev} className="text-slate-500 text-sm hover:text-white transition-colors">이전 단계로</button>
+              </div>
             </form>
           )}
 
+          {/* STEP 4: Contact Info */}
           {step === 4 && (
-            <div className="animate-fade-in-up">
-              <div className="mb-6 bg-accent/10 border border-accent/20 rounded-2xl p-5 text-center">
-                <div className="text-accent font-bold text-lg mb-1">🎉 1차 분석 완료</div>
-                <p className="text-slate-300 text-sm">
-                  입력 정보 기반으로 진단이 완료되었습니다.<br/>
-                  결과를 받아보실 연락처를 남겨주세요.
+            <div className="animate-fade-in-up flex-1 flex flex-col">
+              <div className="mb-6 bg-accent/10 border border-accent/20 rounded-xl p-5">
+                <div className="text-accent font-bold text-lg mb-1 flex items-center gap-2">
+                   <span>📋</span> 1차 진단 완료
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  입력하신 내용을 바탕으로 <b>회생 자격 요건</b>이 확인되었습니다.<br/>
+                  아래 연락처를 남겨주시면, <b>정확한 탕감율과 비용</b>을 안내드립니다.
                 </p>
               </div>
               
@@ -252,32 +293,32 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
                     <svg className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#0f172a] opacity-0 peer-checked:opacity-100" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>
                   <div className="text-xs text-slate-400">
-                    (필수) 무료 진단 및 비용 안내를 위한<br/>개인정보 수집·이용에 동의합니다.
+                    (필수) 상담을 위한 개인정보 수집·이용에 동의합니다.
                   </div>
                 </label>
 
-                <Button type="submit" className="w-full h-16 text-xl bg-gradient-to-r from-accent to-blue-500 text-white shadow-lg shadow-blue-500/30 border-0 mt-2">
-                  무료 진단 결과 받기
+                <Button type="submit" className="w-full h-14 text-lg bg-gradient-to-r from-accent to-blue-500 text-white shadow-lg shadow-blue-500/20 border-0 mt-2">
+                  무료 상담 신청하기
                 </Button>
               </form>
             </div>
           )}
 
+          {/* STEP 5: Success */}
           {step === 5 && (
-            <div className="text-center py-6 animate-fade-in-up">
-              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/20">
-                <svg className="w-10 h-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex-1 flex flex-col items-center justify-center text-center py-6 animate-fade-in-up">
+              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-6 border border-green-500/20">
+                <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">접수 완료되었습니다.</h3>
-              <p className="text-slate-300 mb-8 leading-relaxed">
-                담당 변호사가 내용 검토 후<br/>
-                <b className="text-accent">{formData.phone}</b> 번호로<br/>
-                정확한 <b>탕감율과 비용</b>을 안내드립니다.
+              <h3 className="text-2xl font-bold text-white mb-2">신청이 접수되었습니다.</h3>
+              <p className="text-slate-300 text-sm mb-8 leading-relaxed">
+                담당자가 내용을 검토한 후,<br/>
+                <b className="text-accent">{formData.phone}</b> 번호로 연락드리겠습니다.
               </p>
-              <div className="bg-[#0f172a] p-4 rounded-xl border border-white/5 text-sm text-slate-500">
-                순차 연락 중이오니 잠시만 기다려주세요.
+              <div className="w-full bg-[#0f172a] p-4 rounded-xl border border-white/5 text-xs text-slate-500">
+                * 부재 시 문자로 안내해 드립니다.
               </div>
             </div>
           )}
