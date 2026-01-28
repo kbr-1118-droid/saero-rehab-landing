@@ -24,13 +24,13 @@ const App: React.FC = () => {
       <TopBar />
 
       <main>
-        <div className="max-w-[1040px] mx-auto px-[18px] pt-8 pb-12">
+        <div className="max-w-[1200px] mx-auto px-[20px] pt-10 pb-16">
           <Hero />
         </div>
         
         <StatsSection />
 
-        <div className="max-w-[1040px] mx-auto px-[18px] py-16 space-y-28">
+        <div className="max-w-[1200px] mx-auto px-[20px] py-20 space-y-32">
           <AIAnalysisSection />
           <SystemIntroSection />
           <ProcessSection />

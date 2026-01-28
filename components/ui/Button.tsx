@@ -24,8 +24,8 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const sizes = {
-    sm: "px-3.5 py-2 text-[13px] min-h-[40px]",
-    md: "px-3.5 py-3 text-[14px] min-h-[44px] w-full sm:w-auto"
+    sm: "px-4 py-2.5 text-[14px] min-h-[42px]",
+    md: "px-5 py-3.5 text-[16px] min-h-[52px] w-full sm:w-auto"
   };
 
   const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;

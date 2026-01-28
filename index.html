@@ -35,6 +35,22 @@
 
   <style>
     /* Premium Global Styles */
+    :root {
+      font-size: 16px;
+    }
+    
+    /* Scale up the entire UI on larger screens */
+    @media (min-width: 1024px) {
+      :root {
+        font-size: 17px;
+      }
+    }
+    @media (min-width: 1440px) {
+      :root {
+        font-size: 18px;
+      }
+    }
+
     body {
       background-color: #0f172a;
       /* Subtle noise texture */
@@ -59,9 +75,9 @@
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
     "vite": "https://esm.sh/vite@^7.3.1",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
