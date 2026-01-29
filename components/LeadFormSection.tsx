@@ -51,7 +51,8 @@ const OptionButton: React.FC<OptionButtonProps> = ({ index, label, selected, onC
 const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
   const [step, setStep] = useState(1); 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  
+  const initialFormData = {
     status: '',
     income: '',
     debtAmount: '',
@@ -59,7 +60,9 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
     phone: '',
     note: '',
     agreement: true
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -89,6 +92,14 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
 
   const handlePrev = () => {
     setStep(prev => prev - 1);
+  };
+
+  const handleReset = () => {
+    setFormData(initialFormData);
+    setStep(1);
+    if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -304,21 +315,75 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
             </div>
           )}
 
-          {/* STEP 5: Success */}
+          {/* STEP 5: Success Result (Revised) */}
           {step === 5 && (
-            <div className="flex-1 flex flex-col items-center justify-center text-center py-6 animate-fade-in-up">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-6 border border-green-500/20">
-                <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="flex-1 flex flex-col items-center pt-2 animate-fade-in-up">
+              {/* Title */}
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                📌 1차 진단 결과
+              </h3>
+
+              {/* Result Box */}
+              <div className="w-full bg-[#162032] border border-accent/30 rounded-xl p-5 mb-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-accent"></div>
+
+                <div className="text-center mb-5 mt-2">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent font-bold text-xs mb-3 border border-accent/20">
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                    분석 완료
+                  </div>
+                  <p className="text-lg md:text-xl text-white font-bold leading-snug">
+                    입력하신 정보 기준,<br className="md:hidden"/>
+                    <span className="text-accent">개인회생 진행 가능성이 높습니다.</span>
+                  </p>
+                </div>
+
+                <div className="space-y-3 border-t border-white/10 pt-4 bg-white/[0.02] -mx-5 px-5 pb-2">
+                  <div className="flex justify-between items-center text-sm md:text-base">
+                    <span className="text-slate-400">월 예상 변제금</span>
+                    <span className="text-white font-bold">약 30~50만 원 내외</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm md:text-base">
+                    <span className="text-slate-400">채무 탕감 가능성</span>
+                    <span className="text-white font-bold">원금 기준 최대 90%</span>
+                  </div>
+                </div>
+                <div className="mt-3 text-[11px] text-slate-500 text-right">
+                  * 위 수치는 예시이며, 개인별 조건에 따라 달라집니다.
+                </div>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">신청이 접수되었습니다.</h3>
-              <p className="text-slate-300 text-sm mb-8 leading-relaxed">
-                담당자가 내용을 검토한 후,<br/>
-                <b className="text-accent">{formData.phone}</b> 번호로 연락드리겠습니다.
-              </p>
-              <div className="w-full bg-[#0f172a] p-4 rounded-xl border border-white/5 text-xs text-slate-500">
-                * 부재 시 문자로 안내해 드립니다.
+
+              {/* Call Explanation */}
+              <div className="text-center space-y-4 max-w-sm mx-auto w-full">
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  ※ 정확한 변제금과 기간은<br/>
+                  <b>재산, 부양가족, 대출 시기</b>를 확인해야 산출됩니다.
+                </p>
+
+                <div className="bg-white/5 rounded-lg p-4 border border-white/5 w-full">
+                  <p className="text-accent font-bold mb-1 flex items-center justify-center gap-2">
+                    📞 담당자 배정 완료
+                  </p>
+                  <p className="text-xs text-slate-400 leading-relaxed mb-2">
+                    담당자가 사건 내용을 검토한 후,<br/>
+                    <span className="text-white font-bold">010-6672-8296</span> 번호로 연락드립니다.
+                  </p>
+                  <p className="text-[11px] text-slate-500 border-t border-white/5 pt-2 mt-2 inline-block px-3">
+                    평균 상담 시간: 3~5분 소요
+                  </p>
+                </div>
+
+                {/* Reset Button */}
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="mt-2 text-slate-500 text-xs hover:text-white transition-colors flex items-center justify-center gap-1 mx-auto"
+                >
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  처음으로 돌아가기
+                </button>
               </div>
             </div>
           )}
