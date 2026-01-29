@@ -48,9 +48,6 @@
     fbq('init', '1214584530039980'); 
     fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1214584530039980&ev=PageView&noscript=1"
-  /></noscript>
   <!-- End Facebook Pixel Code -->
 
   <style>
@@ -105,6 +102,11 @@
 </script>
 </head>
 <body>
+  <!-- Facebook Pixel Noscript (Moved to body to fix build error) -->
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1214584530039980&ev=PageView&noscript=1"
+  /></noscript>
+  
   <div id="root"></div>
   <!-- Entry Point Script for Vite -->
   <script type="module" src="/index.tsx"></script>
