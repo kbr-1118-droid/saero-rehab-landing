@@ -41,37 +41,47 @@ const SuccessCasesSection: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {cases.map((item, idx) => (
-          <Card key={idx} className="bg-[#162032] border-white/5 relative overflow-hidden group hover:border-accent/30 transition-all">
-            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span className="text-6xl font-black text-white">"</span>
-            </div>
-            
-            <div className="mb-4">
-              <span className="inline-block bg-white/5 border border-white/10 rounded-md px-2 py-1 text-[11px] text-slate-300 mb-2">
-                {item.badge}
-              </span>
-              <h3 className="text-lg font-bold text-white">{item.title}</h3>
-            </div>
-
-            <div className="bg-[#0f172a] rounded-xl p-4 mb-4 border border-white/5">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-slate-500 line-through decoration-slate-500">{item.before}</span>
-                <span className="text-xs text-slate-400">변제율 {100 - parseInt(item.rate)}%</span>
+        {cases.map((item, idx) => {
+          // Calculate percentage only if rate is a percentage string
+          const isPercent = item.rate.includes('%');
+          const percentValue = isPercent ? 100 - parseInt(item.rate) : 0;
+          
+          return (
+            <Card key={idx} className="bg-[#162032] border-white/5 relative overflow-hidden group hover:border-accent/30 transition-all">
+              <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span className="text-6xl font-black text-white">"</span>
               </div>
-              <div className="flex justify-between items-end">
-                <span className="text-accent font-bold text-xl">{item.after}</span>
-                <span className="text-white text-sm font-bold bg-accent/20 px-2 py-0.5 rounded text-accent">
-                   {item.rate} 탕감
+              
+              <div className="mb-4">
+                <span className="inline-block bg-white/5 border border-white/10 rounded-md px-2 py-1 text-[11px] text-slate-300 mb-2">
+                  {item.badge}
                 </span>
+                <h3 className="text-lg font-bold text-white">{item.title}</h3>
               </div>
-            </div>
 
-            <p className="text-[13px] text-slate-400 leading-relaxed">
-              "{item.desc}"
-            </p>
-          </Card>
-        ))}
+              <div className="bg-[#0f172a] rounded-xl p-4 mb-4 border border-white/5">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-slate-500 line-through decoration-slate-500">{item.before}</span>
+                  {isPercent ? (
+                    <span className="text-xs text-slate-400">변제율 {percentValue}%</span>
+                  ) : (
+                    <span className="text-xs text-slate-400">채무 0원</span>
+                  )}
+                </div>
+                <div className="flex justify-between items-end">
+                  <span className="text-accent font-bold text-xl">{item.after}</span>
+                  <span className="text-white text-sm font-bold bg-accent/20 px-2 py-0.5 rounded text-accent">
+                     {item.rate} {isPercent && '탕감'}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[13px] text-slate-400 leading-relaxed">
+                "{item.desc}"
+              </p>
+            </Card>
+          );
+        })}
       </div>
       <div className="text-center mt-4 text-[11px] text-slate-600">
         * 위 사례는 의뢰인의 동의를 얻어 각색되었으며, 개인별 상황에 따라 결과는 달라질 수 있습니다.
