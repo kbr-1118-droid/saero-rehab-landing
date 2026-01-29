@@ -2,6 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import Card from './ui/Card';
 import Button from './ui/Button';
 
+// Extend Window interface for Facebook Pixel
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 interface LeadFormSectionProps {
   showToast: (msg: string) => void;
 }
@@ -129,6 +136,22 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
       });
 
       if (response.ok) {
+        // [핵심 기능] 페이스북 픽셀 'Lead' 이벤트 전송 및 고급 매칭
+        if (typeof window.fbq === 'function') {
+          // 1. 기본 Lead 이벤트 (전환값 포함)
+          window.fbq('track', 'Lead', {
+            content_name: '자가진단_접수완료',
+            currency: 'KRW',
+            value: 10000, // DB 1건당 가치를 1만원으로 설정 (ROAS 측정용)
+          });
+          
+          // 2. (선택사항) 고급 매칭을 위한 사용자 데이터 전송 시도
+          // 주의: 개인정보 보호 정책에 따라 암호화되거나 페이스북 정책을 준수해야 함.
+          // 여기서는 기본적인 track 호출에 집중합니다.
+          
+          console.log("FB Pixel Lead Sent with Value: 10,000 KRW");
+        }
+
         setLoading(false);
         setStep(5); 
       } else {
@@ -240,6 +263,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
                   onChange={handleChange}
                   placeholder="예: 5000"
                   className="w-full p-6 rounded-xl border border-white/20 bg-[#0f172a] text-white text-3xl outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-slate-700 font-bold text-center"
+                  inputMode="numeric"
                   autoFocus
                 />
                 <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-medium">만원</div>
@@ -254,7 +278,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
             </form>
           )}
 
-          {/* STEP 4: Contact Info */}
+          {/* STEP 4: Contact Info (Updated for Auto-fill) */}
           {step === 4 && (
             <div className="animate-fade-in-up flex-1 flex flex-col">
               <div className="mb-6 bg-accent/10 border border-accent/20 rounded-xl p-5">
@@ -277,6 +301,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="홍길동"
+                    autoComplete="name" 
                     className="w-full p-4 rounded-xl border border-white/20 bg-[#0f172a] text-white text-lg outline-none focus:border-accent transition-all"
                   />
                 </div>
@@ -289,6 +314,7 @@ const LeadFormSection: React.FC<LeadFormSectionProps> = ({ showToast }) => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="010-0000-0000"
+                    autoComplete="tel"
                     className="w-full p-4 rounded-xl border border-white/20 bg-[#0f172a] text-white text-lg outline-none focus:border-accent transition-all"
                   />
                 </div>
